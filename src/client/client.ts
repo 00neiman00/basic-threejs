@@ -1,8 +1,10 @@
 import * as THREE from "three";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { GUI } from "dat.gui";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
 const scene = new THREE.Scene();
+scene.add(new THREE.AxesHelper(5));
 
 const camera = new THREE.PerspectiveCamera(
   75,
@@ -25,6 +27,9 @@ const material = new THREE.MeshBasicMaterial({
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+
 window.addEventListener("resize", onWindowResize, false);
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -32,26 +37,35 @@ function onWindowResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   render();
 }
-
 const stats = new Stats();
 document.body.appendChild(stats.dom);
-
 const gui = new GUI();
 const cubeFolder = gui.addFolder("Cube");
+const cubeRotationFolder = cubeFolder.addFolder("Rotation");
 cubeFolder.add(cube.rotation, "x", 0, Math.PI * 2);
 cubeFolder.add(cube.rotation, "y", 0, Math.PI * 2);
 cubeFolder.add(cube.rotation, "z", 0, Math.PI * 2);
 cubeFolder.open();
+cubeRotationFolder.open();
+const cubePositionFolder = cubeFolder.addFolder("Position");
+cubePositionFolder.add(cube.position, "x", -10, 10, 0.5);
+cubePositionFolder.add(cube.position, "y", -10, 10, 0.5);
+cubePositionFolder.add(cube.position, "z", -10, 10, 0.5);
+cubePositionFolder.open();
 
-const cameraFolder = gui.addFolder("camera");
-cameraFolder.add(camera.position, "z", 0, 20);
-cameraFolder.open();
+const cubeScaleFolder = cubeFolder.addFolder("Scale");
+cubeScaleFolder.add(cube.scale, "x", 0, 5);
+cubeScaleFolder.add(cube.scale, "y", 0, 5);
+cubeScaleFolder.add(cube.scale, "z", 0, 5);
+cubeScaleFolder.open();
+
+cubeFolder.add(cube, "visible", true);
 
 function animate() {
   requestAnimationFrame(animate);
 
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+  // cube.rotation.x += 0.01;
+  // cube.rotation.y += 0.01;
 
   render();
   stats.update();
